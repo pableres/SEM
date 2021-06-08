@@ -1,0 +1,38 @@
+library(haven)
+library(lavaan)
+library(semPlot)
+library(diagram)
+
+df <- read_sav("C:/Users/pable/Desktop/You tube/Modelo ecuaciones estructurales/df.sav")
+df<-as.data.frame(df)
+View(df)
+df<- df[complete.cases(df), ]
+
+names(df)
+
+model1<-'
+    consitencia_orgasmo ~ FSFI_orgasmo
+    '
+fit1 <- sem(model1, data=df)
+summary(fit1, standardized=TRUE, fit.measures=TRUE, rsquare=TRUE)
+
+
+model2<-'
+    salud_orgasmica =~ FSFI_orgasmo + consitencia_orgasmo
+    FSFI_orgasmo ~~ consitencia_orgasmo
+    '
+fit2 <- sem(model2, data=df)
+summary(fit2, standardized=TRUE, fit.measures=TRUE, rsquare=TRUE)
+semPaths(fit2, intercepts = FALSE,edge.label.cex=1.5, optimizeLatRes = TRUE, groups = "lat",pastel = TRUE, exoVar = FALSE, sizeInt=5,edge.color ="black",esize = 6, label.prop=2,sizeLat = 6,"std")
+
+
+model3<-'
+    salud_orgasmica =~ 1*FSFI_orgasmo + consitencia_orgasmo
+    Inemoc =~ TMMSA + TMMSC + TMMSR
+    ORSlat =~ ORSafectivo + ORSsensorial + ORSintimidad + ORSrecompensa
+    capor =~ Inemoc + salud_orgasmica + ORSlat
+'
+fit3 <- sem(model3, data=df)
+summary(fit3, standardized=TRUE, fit.measures=TRUE, rsquare=TRUE)
+semPaths(fit3, intercepts = FALSE,edge.label.cex=1.5, optimizeLatRes = TRUE, groups = "lat",pastel = TRUE, exoVar = FALSE, sizeInt=5,edge.color ="black",esize = 6, label.prop=2,sizeLat = 6,"std")
+parameterEstimates(fit3)
